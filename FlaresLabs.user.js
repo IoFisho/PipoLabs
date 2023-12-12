@@ -1,4 +1,5 @@
 // ==UserScript==
+// LEGGERE I COMMENTI SEMPRE PRECODICE
 // @name         FlaresLabs
 // @namespace    https://flaresplay.com/
 // @version      0.3.7
@@ -6,9 +7,9 @@
 // @author       Flares / Contributions by SkyLove512, anthonyra, niofox
 // @match        https://labs.staratlas.com/
 // @require      https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js
-// @require      https://raw.githubusercontent.com/Flares5/FlaresLabs/main/anchor-browserified.js
-// @require      https://raw.githubusercontent.com/Flares5/FlaresLabs/main/buffer-browserified.js
-// @require      https://raw.githubusercontent.com/Flares5/FlaresLabs/main/bs58-browserified.js
+// @require      https://github.com/IoFisho/PipoLabs/blob/main/anchor-browserified.js
+// @require      https://github.com/IoFisho/PipoLabs/blob/main/buffer-browserified.js
+// @require      https://github.com/IoFisho/PipoLabs/blob/main/bs58-browserified.js
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=staratlas.com
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -42,7 +43,19 @@
     let userProfileFactionAcct = null;
     let userFleetAccts = null;
     let userFleets = [];
+/* Il codice definisce inizialmente tre variabili sageProgram, profileProgram, e cargoProgram e le inizializza con nuove istanze della classe BrowserAnchor.anchor.Program. Questi oggetti rappresentano programmi associati a una piattaforma Sage. 
+Ogni programma ha un identificatore univoco (sageIDL, profileIDL, e cargoIDL, rispettivamente) e un identificatore univoco per l'account del programma (sageProgramId, profileProgramId, e cargoProgramId, rispettivamente).
 
+Il codice quindi utilizza i metodi .account.game.all(), .account.surveyDataUnitTracker.all(), e .account.cargoStatsDefinition.all() per recuperare informazioni sugli account di gioco, i tracker di unità dati di sondaggio, e le definizioni di statistiche di carico associati a ciascun programma. 
+Questi metodi restituiscono array di account o definizioni di statistiche, che vengono memorizzati nelle variabili sageGameAcct, sageSDUTrackerAcct, e cargoStatsDefinitionAcct, rispettivamente.
+
+Inoltre, il codice crea un oggetto seqBN di tipo BrowserAnchor.anchor.BN e lo inizializza con il valore dell'identificatore di sequenza (cargoStatsDefSeqId) della definizione di statistiche di carico del programma cargoProgram.
+Successivamente, il codice converte l'oggetto seqBN in una sequenza binaria a 64 bit (seqArr) e codifica tale sequenza in formato Base58 (seq58).
+
+In definitiva, il codice consente di interagire con tre programmi associati a una piattaforma Sage: uno dedicato ai giochi, uno dedicato ai profili, e uno dedicato alle statistiche di carico.
+Il codice recupera informazioni sugli account e sulle definizioni di statistiche associati a ciascun programma, nonché converte un identificatore di sequenza in formato Base58.
+// LEGGERE I COMMENTI SEMPRE PRECODICE
+ */
     let sageProgram = new BrowserAnchor.anchor.Program(sageIDL, sageProgramId, anchorProvider);
     console.log('sageProgram: ', sageProgram);
     let [sageGameAcct] = await sageProgram.account.game.all();
@@ -61,6 +74,29 @@
     let seqBN = new BrowserAnchor.anchor.BN(cargoStatsDefSeqId);
     let seqArr = seqBN.toTwos(64).toArrayLike(BrowserBuffer.Buffer.Buffer, "be", 2);
     let seq58 = bs58.encode(seqArr);
+
+	/*
+ 	Il codice inizia ricercando gli account dei tipi di carico associati a un determinato programma cargoProgram. Per ogni tipo di carico, il codice specifica due condizioni:
+
+	memcmp: Questa condizione verifica che il valore binario memorizzato nella posizione 41 dell'account del tipo di carico corrisponda all'identificatore univoco (SDUsgfSZaDhhZ76U3ZgvtFiXsfnHbf2VrzYxjBZ5YbM) del tipo di carico.
+
+	seq58: Questa condizione verifica che il valore binario memorizzato nella posizione 75 dell'account del tipo di carico corrisponda alla sequenza seq58 precedentemente calcolata.
+
+	Il codice recupera gli account corrispondenti a queste condizioni e li memorizza nelle variabili sduCargoTypeAcct, repairKitCargoTypeAcct, e fuelCargoTypeAcct, rispettivamente.
+
+	Infine, il codice cerca l'indirizzo del token SDU utilizzando la funzione findProgramAddressSync(). Questa funzione prende in input tre chiavi pubbliche:
+
+	8bBi84Yi7vwSWXSYKDbbHmqnFqqAS41MvPkSEdzFtbsk: Questa chiave pubblica rappresenta il programma TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA.
+
+	SDUsgfSZaDhhZ76U3ZgvtFiXsfnHbf2VrzYxjBZ5YbM: Questa chiave pubblica rappresenta il tipo di carico SDU.
+
+	ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL: Questa chiave pubblica rappresenta il programma ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL.
+
+	Il codice calcola l'indirizzo del token SDU come output della funzione findProgramAddressSync() e lo memorizza nella variabile sduTokenFrom.
+
+	In sintesi, il codice consente di recuperare gli account dei tipi di carico SDU, del kit di riparazione, e del carburante, nonché l'indirizzo del token SDU.
+ // LEGGERE I COMMENTI SEMPRE PRECODICE
+	*/
     let [sduCargoTypeAcct] = await cargoProgram.account.cargoType.all([
         {
            memcmp: {
@@ -119,7 +155,32 @@
         ],
         new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL')
     );
+	/*
+	La funzione createProgramDerivedAccount() viene utilizzata per creare un nuovo account derivato da un programma Solana. Un account derivato è un tipo di account speciale che è associato a un programma specifico e può essere utilizzato per interagire con quel programma in modo controllato.
 
+	La funzione createProgramDerivedAccount() accetta tre parametri:
+
+	derived: L'indirizzo dell'account derivato che si desidera creare.
+
+	derivedFrom1: L'indirizzo della chiave pubblica che verrà utilizzata per derivare l'account derivato.
+
+	derivedFrom2: L'indirizzo di un'altra chiave pubblica che verrà utilizzata per derivare l'account derivato.
+
+	La funzione inizia creando un array di oggetti { pubkey, isSigner, isWritable } che rappresentano le chiavi pubbliche coinvolte nell'operazione di creazione dell'account derivato. Il codice specifica che:
+	
+	L'account del chiamante (userPublicKey) sarà sia un firmatario che un account scrivibile per l'operazione.
+
+	L'account derivato (derived) sarà solo un account scrivibile per l'operazione.
+
+	Le chiavi pubbliche derivedFrom1 e derivedFrom2 non saranno firmatari o account scrivibili per l'operazione.
+
+	Successivamente, la funzione crea un oggetto transactionInstruction che contiene le informazioni necessarie per creare l'account derivato. Questo oggetto include l'array di chiavi pubbliche, l'identificatore del programma ('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL') e i dati vuoti ([]).
+
+	Infine, la funzione invia la transazione utilizzando la funzione txSignAndSend() e memorizza il risultato della transazione nella variabile txResult. La funzione txSignAndSend() firma la transazione, calcola la firma della transazione e la invia alla rete Solana.
+
+	In sintesi, la funzione createProgramDerivedAccount() crea un nuovo account derivato da un programma Solana specificato e lo associa alle chiavi pubbliche fornite. L'account derivato può essere utilizzato per interagire con il programma in modo controllato.
+ // LEGGERE I COMMENTI SEMPRE PRECODICE
+	*/
     function createProgramDerivedAccount(derived, derivedFrom1, derivedFrom2) {
         return new Promise(async resolve => {
             const keys = [{
@@ -156,7 +217,27 @@
             resolve(txResult);
         });
     }
+/*
+	La funzione getFleetState() viene utilizzata per determinare lo stato di una flotta di navi in un gioco basato su blockchain Solana. Riceve in input un oggetto fleetAcctInfo che rappresenta le informazioni relative al conto della flotta.
 
+	La funzione inizia recuperando la parte rimanente dei dati dalla posizione 414 nell'oggetto fleetAcctInfo.data. Questa parte contiene informazioni specifiche allo stato della flotta.
+
+	Successivamente, la funzione utilizza un switch per determinare lo stato della flotta in base al primo byte dei dati rimanenti:
+
+	0: Lo stato della flotta è StarbaseLoadingBay. La funzione recupera ulteriori informazioni sullo stato utilizzando la funzione sageProgram.coder.types.decode('StarbaseLoadingBay', remainingData.subarray(1)) e le memorizza nella variabile extra.
+
+	1: Lo stato della flotta è Idle. La funzione recupera ulteriori informazioni sullo stato utilizzando la funzione sageProgram.coder.types.decode('Idle', remainingData.subarray(1)) e li converte in un array di numeri che rappresentano le coordinate della flotta (sector.sector[0].toNumber(), sector.sector[1].toNumber()). Le coordinate vengono memorizzate nella variabile extra.
+
+	2: Lo stato della flotta è MineAsteroid. La funzione recupera ulteriori informazioni sullo stato utilizzando la funzione sageProgram.coder.types.decode('MineAsteroid', remainingData.subarray(1)) e le memorizza nella variabile extra.
+
+	3: Lo stato della flotta è MoveWarp. La funzione recupera ulteriori informazioni sullo stato utilizzando la funzione sageProgram.coder.types.decode('MoveWarp', remainingData.subarray(1)) e le memorizza nella variabile extra.
+
+	4: Lo stato della flotta è MoveSubwarp. La funzione recupera ulteriori informazioni sullo stato utilizzando la funzione sageProgram.coder.types.decode('MoveSubwarp', remainingData.subarray(1)) e le memorizza nella variabile extra.
+
+	5: Lo stato della flotta è Respawn. La funzione non recupera ulteriori informazioni sullo stato.
+
+	Infine, la funzione restituisce un array contenente lo stato della flotta (fleetState) e le informazioni aggiuntive (extra).
+*/
     function getFleetState(fleetAcctInfo) {
         let remainingData = fleetAcctInfo.data.subarray(414);
         let fleetState = 'Unknown';
@@ -190,7 +271,19 @@
         }
         return [fleetState, extra];
     }
+/*
+	La funzione initUser() viene utilizzata per inizializzare l'account utente di un gioco basato su blockchain Solana. La funzione si occupa di connettersi al portafoglio Solana, recuperare le informazioni relative ai profili utente e cercare il profilo dell'utente corrente.
 
+	La funzione inizia verificando se il portafoglio Solana è aperto utilizzando la variabile solflare. Se il portafoglio è aperto, la funzione recupera la chiave pubblica dell'utente corrente (userPublicKey) utilizzando il metodo publicKey del portafoglio. In caso contrario, la funzione apre il portafoglio Solana e recupera la chiave pubblica dell'utente corrente.
+
+	Successivamente, la funzione recupera i profili utente utilizzando il metodo getProgramAccounts() di Solana Connection e salva i risultati in un array userProfiles.
+
+	Per ogni profilo utente nell'array userProfiles, la funzione estrae i dati del profilo utilizzando la funzione subarray() e li analizza per trovare il profilo dell'utente corrente. La funzione verifica se la chiave pubblica del profilo (profDecoded.key) corrisponde alla chiave pubblica dell'utente corrente (userPublicKey).
+
+	Se il profilo appartiene all'utente corrente, la funzione recupera il nome dell'utente dal conto associato al profilo utilizzando il metodo new TextDecoder().decode() e lo salva in una variabile playerName. Successivamente, la funzione crea un oggetto { profile: userProf.pubkey.toString(), name: playerName, idx: iter } con i dati del profilo e lo salva nell'array foundProf.
+
+	Infine, la funzione restituisce l'array foundProf che contiene i profili utente trovati, tra cui il profilo dell'utente corrente.
+*/
     function initUser() {
         return new Promise(async resolve => {
             if (typeof solflare === 'undefined') {
@@ -233,12 +326,20 @@
                     iter += 1;
                 }
             }
+	/*
+	Il codice precedente utilizza la funzione assistProfileToggle() per determinare il profilo utente corrente da utilizzare all'interno di una stanza di gioco Sage. Se l'utente ha più di un profilo attivo nella stanza, la funzione assistProfileToggle() viene richiamata per scegliere il profilo da utilizzare. In caso contrario, il primo profilo nell'array foundProf viene utilizzato come profilo utente corrente.
 
+	La funzione inizia verificando se la lunghezza dell'array foundProf è maggiore di 1. Se è così, la funzione richiama la funzione assistProfileToggle() e salva il risultato in una variabile userProfile. La funzione assistProfileToggle() consente all'utente di scegliere il profilo da utilizzare.
+
+	Nel caso in cui la lunghezza dell'array foundProf sia uguale a 1, la funzione assegna il primo profilo (foundProf[0]) all'array userProfile e salva l'indice del profilo nell'array userProfileKeyIdx.
+
+	Infine, la funzione assegna la chiave pubblica dell'account associato al profilo utente corrente alla variabile userProfileAcct e salva l'indice del profilo (userProfileKeyIdx).
+	*/
             let userProfile = foundProf.length > 1 ? await assistProfileToggle(foundProf) : foundProf[0];
             userProfileAcct = new solanaWeb3.PublicKey(userProfile.profile);
             userProfileKeyIdx = userProfile.idx;
-
-            /*
+	
+            /* // NO ROBA MIA
             function getUserProfileAcct(procId, roomId, sessionId) {
                 return new Promise((resolve) => {
                     let autoWS = new WebSocket(`wss://starcomm-mp.staratlas.com/${procId}/${roomId}?sessionId=${sessionId}`);
@@ -274,7 +375,7 @@
             });
             let sageRoomJson = await sageRoom.json();
             await getUserProfileAcct(sageRoomJson.room.processId, sageRoomJson.room.roomId, sageRoomJson.sessionId);
-            */
+            */ //NO ROBA MIA
 
             let profileFactionProgram = new BrowserAnchor.anchor.Program(profileFactionIDL, profileFactionProgramId, anchorProvider);
             [userProfileFactionAcct] = await profileFactionProgram.account.profileFactionAccount.all([
