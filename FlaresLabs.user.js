@@ -3122,7 +3122,7 @@
             assistModal.style.display = 'none';
             let assistModalContent = document.createElement('div');
             assistModalContent.classList.add('assist-modal-content');            
-            assistModalContent.innerHTML = '<div class="assist-modal-header"><img src="' + iconStr + '" /><span style="padding-left: 15px;">FlaresLabs</span><div class="assist-modal-header-right"><button id="addAcctOpen" class="assist-modal-btn">Add Restricted Account</button><button id="configImportExport" class="assist-modal-btn">Import/Export</button><button class=" assist-modal-btn assist-modal-save">Save</button><span class="assist-modal-close">x</span></div></div><div class="assist-modal-body"><span id="assist-modal-error"></span><table><tr><td>Fleet</td><td>Assignment</td><td>Target</td><td>Starbase</td><td>Subwarp</td><td>Max Cargo</td><td>Max Ammo</td><td>Max Fuel</td></tr></table></div>';
+            assistModalContent.innerHTML = '<div class="assist-modal-header"><span style="padding-left: 15px;">FlaresLabs</span><div class="assist-modal-header-right"><button id="addAcctOpen" class="assist-modal-btn">Add Restricted Account</button><button id="configImportExport" class="assist-modal-btn">Import/Export</button><button class=" assist-modal-btn assist-modal-save">Save</button><span class="assist-modal-close">x</span></div></div><div class="assist-modal-body"><span id="assist-modal-error"></span><table><tr><td>Fleet</td><td>Assignment</td><td>Target</td><td>Starbase</td><td>Subwarp</td><td>Max Cargo</td><td>Max Ammo</td><td>Max Fuel</td></tr></table></div>';
             assistModal.append(assistModalContent);
 
             let importModal = document.createElement('div');
