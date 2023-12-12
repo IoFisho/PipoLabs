@@ -16,7 +16,7 @@ This tool allows a user to manage Permissioned Accounts. The tool interacts with
 ## Setup
 The script is built as a TamperMonkey script. TamperMonkey is a userscript manager available for free as a browser extension.
 1.	Install TamperMonkey.
-2.	Select the SLY_Permissioned_Account_Management.user.js file in this repo. View the file and click the "Raw" button to view its source.
+2.	Select the Account_Management.user.js file in this repo. View the file and click the "Raw" button to view its source.
 3.	Copy the source.
 4.	Open Tampermonkey in your browser and click the Add Script tab (icon with a plus symbol).
 5.	Paste the source into the script window and click File > Save.
@@ -47,15 +47,15 @@ In this section, you will be interacting with the ***Manager Account.***
 3.	Sign the transaction.
 4.	Wait for the transaction to be confirmed.
 
-## Using SLY Lab Assistant with a Permissioned Account
-The official SAGE Labs UI does not currently support permissioned accounts. You will need to perform any necessary setup with your Manager Account prior to using SLY Lab Assistant. This includes forming fleets and ensuring that fleets are undocked in appropriate locations.
+## Using FlaresLabs with a Permissioned Account
+The official SAGE Labs UI does not currently support permissioned accounts. You will need to perform any necessary setup with your Manager Account prior to using FlaresLabs. This includes forming fleets and ensuring that fleets are undocked in appropriate locations.
 
 In this section, you will be interacting with the ***Permissioned Account***
 
 1.	Connect your Permissioned Account wallet
 a.	NOTE: This script only supports Solflare and Phantom, and the browser cannot have both installed.
 2.	Browse to https://labs.staratlas.com/.
-3.	Wait for SLY Lab Assistant to load. The control buttons will appear at the top. Wait for the button to change from “Wait…” to “Start”.
-4.	If your Permissioned Account has access to multiple SAGE Games, a panel will appear prompting a selection. Choose the SAGE Game that you would like SLY Lab Assistant to interact with.
+3.	Wait for FlaresLabs to load. The control buttons will appear at the top. Wait for the button to change from “Wait…” to “Start”.
+4.	If your Permissioned Account has access to multiple SAGE Games, a panel will appear prompting a selection. Choose the SAGE Game that you would like FlaresLabs to interact with.
 5.	Click Tools > Status to open the Status panel.
 6.	Click the Start button.
