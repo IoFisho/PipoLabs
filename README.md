@@ -1,5 +1,4 @@
 
-# Lab Assistant by Shadow Loyal [SLY]
 This is a browser-based script to track status and automate actions within SAGE Labs.
 
 Current features:
@@ -54,7 +53,7 @@ The script is built as a TamperMonkey script. [TamperMonkey](https://www.tamperm
 
 #### Setup
 1. Install TamperMonkey
-2. Select the SLY_Lab_Assistant.user.js file in this repo. View the file and click the "Raw" button to view its source.
+2. Select the FlaresLabs.user.js file in this repo. View the file and click the "Raw" button to view its source.
 3. Copy the source
 4. Open Tampermonkey in your browser and click the Add Script tab (icon with a plus symbol)
 5. Paste the source into the script window and click File > Save
@@ -71,19 +70,9 @@ The script is built as a TamperMonkey script. [TamperMonkey](https://www.tamperm
    * Ideally Lab Assistant will handle this, but as it's still a WIP this is the most likely area to still have some bugs.
 2. If you're not sure if something worked, check the blockchain for errors.
 3. If you're pretty sure something broke, check the browser console for errors.
-4. Visit SLY's discord or reach out to justgroove.
 
 #### Regular usage
 1. Launch the game as usual
-2. Click the Lab Assistant "Start" button
+2. Click the FlaresLabs "Start" button
 3. __Leave the browser window open (it can be minimized)__ - this is required since the script runs in the browser
 
-## Contact Information
-
-Our website: https://sly.cyclic.app/
-
-Our discord: https://discord.gg/DCD9CuJFRr
-
-Our github: https://github.com/ImGroovin
-
-If you'd like to tip/donate/buy the devs a beer/coffee, our Solana address: SLYxadUPv6gnFRBKj7UxZytGYbLdAtUHn4TTLMj1dmL
