@@ -43,7 +43,7 @@
     let userProfileFactionAcct = null;
     let userFleetAccts = null;
     let userFleets = [];
-/* Il codice definisce inizialmente tre variabili sageProgram, profileProgram, e cargoProgram e le inizializza con nuove istanze della classe BrowserAnchor.anchor.Program. Questi oggetti rappresentano programmi associati a una piattaforma Sage. 
+/* Il codice sottostante definisce inizialmente tre variabili sageProgram, profileProgram, e cargoProgram e le inizializza con nuove istanze della classe BrowserAnchor.anchor.Program. Questi oggetti rappresentano programmi associati a una piattaforma Sage. 
 Ogni programma ha un identificatore univoco (sageIDL, profileIDL, e cargoIDL, rispettivamente) e un identificatore univoco per l'account del programma (sageProgramId, profileProgramId, e cargoProgramId, rispettivamente).
 
 Il codice quindi utilizza i metodi .account.game.all(), .account.surveyDataUnitTracker.all(), e .account.cargoStatsDefinition.all() per recuperare informazioni sugli account di gioco, i tracker di unità dati di sondaggio, e le definizioni di statistiche di carico associati a ciascun programma. 
@@ -327,7 +327,7 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
                 }
             }
 	/*
-	Il codice precedente utilizza la funzione assistProfileToggle() per determinare il profilo utente corrente da utilizzare all'interno di una stanza di gioco Sage. Se l'utente ha più di un profilo attivo nella stanza, la funzione assistProfileToggle() viene richiamata per scegliere il profilo da utilizzare. In caso contrario, il primo profilo nell'array foundProf viene utilizzato come profilo utente corrente.
+	Il codice sottostante utilizza la funzione assistProfileToggle() per determinare il profilo utente corrente da utilizzare all'interno di una stanza di gioco Sage. Se l'utente ha più di un profilo attivo nella stanza, la funzione assistProfileToggle() viene richiamata per scegliere il profilo da utilizzare. In caso contrario, il primo profilo nell'array foundProf viene utilizzato come profilo utente corrente.
 
 	La funzione inizia verificando se la lunghezza dell'array foundProf è maggiore di 1. Se è così, la funzione richiama la funzione assistProfileToggle() e salva il risultato in una variabile userProfile. La funzione assistProfileToggle() consente all'utente di scegliere il profilo da utilizzare.
 
@@ -376,7 +376,17 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
             let sageRoomJson = await sageRoom.json();
             await getUserProfileAcct(sageRoomJson.room.processId, sageRoomJson.room.roomId, sageRoomJson.sessionId);
             */ //NO ROBA MIA
-
+	/*
+	Il codice sottostante recupera i conti associati al profilo utente corrente e alla sua flotta all'interno di una stanza di gioco Sage. 
+ 	La funzione utilizza i programmi Solana profileFactionProgram e sageProgram per accedere ai conti pertinenti.
+	La funzione inizia creando un nuovo oggetto profileFactionProgram utilizzando il file di IDL profileFactionIDL,
+	l'identificatore del programma (profileFactionProgramId) e il provider Solana (anchorProvider).
+	Successivamente, la funzione recupera l'account associato alla fazione del profilo utente corrente utilizzando il metodo account.profileFactionAccount.all() del programma profileFactionProgram. 
+	La funzione filtra gli account restituendo solo quello che corrisponde alla chiave pubblica dell'account del profilo utente corrente (userProfileAcct.toBase58()).
+	Infine, la funzione recupera i conti associati alla flotta del profilo utente corrente utilizzando il metodo account.fleet.all() del programma sageProgram. 
+	La funzione filtra gli account restituendo solo quelli che corrispondono alla chiave pubblica del profilo utente corrente (userProfileAcct.toBase58()).
+	La funzione salva gli account recuperati nelle variabili userProfileFactionAcct e userFleetAccts.
+	*/
             let profileFactionProgram = new BrowserAnchor.anchor.Program(profileFactionIDL, profileFactionProgramId, anchorProvider);
             [userProfileFactionAcct] = await profileFactionProgram.account.profileFactionAccount.all([
                 {
@@ -396,7 +406,27 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
                 },
             ]);
             console.log(userFleetAccts);
+	/*
+	Il codice sottostante identifica i token relativi alla riparazione kit, SDU e carburante associati a ciascuna flotta nell'array userFleetAccts.
+ 	La funzione utilizza il metodo findProgramAddressSync() di Solana Web3 per recuperare gli indirizzi dei token associati alla flotta.
 
+	Per ogni flotta nell'array userFleetAccts, il codice recupera il label della flotta (fleetLabel) decodificando i dati binari del label utilizzando il decoder di testo new TextDecoder("utf-8").
+	Successivamente, il codice identifica i token relativi alla riparazione kit, SDU e carburante associati alla flotta utilizzando i seguenti metodi:
+
+	fleetRepairKitToken: Il codice recupera l'indirizzo del token della riparazione kit utilizzando i dati del cargo hold (fleet.account.cargoHold), 
+	l'identificatore del programma TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA (TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA.toBuffer()), 
+	e l'identificatore del contratto troppooLsNYLiVqzg8o4m3L2Uetbn62mvMWRqkog6PQeYKL (SDUsgfSZaDhhZ76U3ZgvtFiXsfnHbf2VrzYxjBZ5YbM.toBuffer()).
+
+	fleetSduToken: Il codice recupera l'indirizzo del token SDU utilizzando i dati del cargo hold (fleet.account.cargoHold),
+	l'identificatore del programma TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA (TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA.toBuffer()),
+	e l'identificatore del contratto SDUsgfSZaDhhZ76U3ZgvtFiXsfnHbf2VrzYxjBZ5YbM (SDUsgfSZaDhhZ76U3ZgvtFiXsfnHbf2VrzYxjBZ5YbM.toBuffer()).
+
+	fleetFuelToken: Il codice recupera l'indirizzo del token del carburante utilizzando i dati del fuelTank (fleet.account.fuelTank),
+	l'identificatore del programma TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA (TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA.toBuffer()),
+	e l'identificatore del contratto fueL3hBZjLLLJHiFH9cqZoozTG3XQZ53diwFPwbzNim (fueL3hBZjLLLJHiFH9cqZoozTG3XQZ53diwFPwbzNim.toBuffer()).
+
+	Il codice salva i token identificati nelle variabili fleetRepairKitToken, fleetSduToken, e fleetFuelToken.
+	*/
             for (let fleet of userFleetAccts) {
                 let fleetLabel = new TextDecoder("utf-8").decode(new Uint8Array(fleet.account.fleetLabel));
                 let [fleetRepairKitToken] = await BrowserAnchor.anchor.web3.PublicKey.findProgramAddressSync(
@@ -423,6 +453,22 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
                     ],
                     new solanaWeb3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL')
                 );
+		/*	
+      		Il codice sottostante recupera le informazioni sulla flotta corrente dell'utente e le salva in un array userFleets. 
+		Per ogni flotta nell'array userFleetAccts, il codice recupera i dati della flotta utilizzando i metodi getAccountInfo() e getParsedTokenAccountsByOwner().
+		Per il token della riparazione kit, SDU e carburante, il codice recupera l'account del token utilizzando i metodi findProgramAddressSync() e getAccountInfo().
+
+		Il codice recupera quindi le informazioni sullo stato della flotta, le coordinate, il carico, il serbatoio del carburante, la banca delle munizioni,
+		il token della riparazione kit, il token SDU, il token del carburante, il consumo di carburante di salto rapido, la velocità di salto rapido, la distanza massima di salto rapido,
+		il consumo di carburante di sotto-salto, la velocità di sotto-salto, la capacità del carico, la capacità del carburante, la capacità delle munizioni, il costo della scansione,
+		il cooldown della scansione, il cooldown del salto rapido, il tasso di estrazione mineraria, il consumo di cibo, il consumo di munizioni, la quantità di carburante necessaria per uscire dal pianeta,
+		la destinazione, la coordinata della stella base, il blocco di scansione, l'indice del blocco di scansione, la fine della scansione, il conteggio dei salti ignorati, l'inizio del settore di scansione,
+		il numero minimo di scansioni, il movimento della flotta, la risorsa mineraria, il pianeta minerario e il numero di riparazioni kit.
+
+		Il codice salva infine le informazioni della flotta nell'array userFleets e le ordina in base al label della flotta.
+
+		Infine, la funzione initComplete viene impostata su true e la promessa viene risolta.		
+	       */
                 let fleetSavedData = await GM.getValue(fleet.publicKey.toString(), '{}');
                 let fleetParsedData = JSON.parse(fleetSavedData);
                 let fleetDest = fleetParsedData && fleetParsedData.dest ? fleetParsedData.dest : '';
@@ -459,13 +505,36 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
             resolve();
         });
     }
-
+/*
+	La funzione wait(ms) crea una promessa che si risolve dopo un periodo di tempo specificato in millisecondi ms. 
+ 	La funzione utilizza il metodo setTimeout() per impostare un timeout e quindi crea una nuova promessa che viene risolta al termine del timeout.
+	La funzione wait(ms) è utile per ritardare l'esecuzione di una parte del codice per un periodo di tempo specifico.
+	Ad esempio, la funzione può essere utilizzata per simulare un ritardo di rete o per dare all'utente il tempo di interagire con l'interfaccia utente.
+*/
     function wait(ms) {
         return new Promise(resolve => {
             setTimeout(resolve, ms);
         });
     }
+/*	
+	La funzione getBalanceChange(txResult, targetAcct) viene utilizzata per recuperare il cambiamento di saldo di un account specifico a seguito di una transazione.
+ 	La funzione accetta due parametri:
+		txResult: Il risultato della transazione che si desidera analizzare
+		targetAcct: L'account del cui saldo si desidera analizzare il cambiamento
+	La funzione inizia individuando l'indice dell'account di destinazione nell'array txResult.transaction.message.staticAccountKeys. 
+ 	L'array staticAccountKeys contiene gli indirizzi temporanei degli account coinvolti nella transazione.
 
+	Successivamente, la funzione recupera l'oggetto preBalanceObj dall'array txResult.meta.preTokenBalances che rappresenta il saldo dell'account di destinazione prima della transazione.
+	L'oggetto preBalanceObj contiene il valore del saldo dell'account, rappresentato dalla proprietà uiTokenAmount.uiAmount.
+
+	Analogamente, la funzione recupera l'oggetto postBalanceObj dall'array txResult.meta.postTokenBalances che rappresenta il saldo dell'account di destinazione dopo la transazione.
+	Anche l'oggetto postBalanceObj contiene il valore del saldo dell'account, rappresentato dalla proprietà uiTokenAmount.uiAmount.
+
+	Infine, la funzione crea un oggetto contenente i valori del saldo prima e dopo la transazione e lo restituisce come risultato.
+ 	L'oggetto ha le seguenti proprietà:
+		preBalance: Il saldo dell'account prima della transazione
+		postBalance: Il saldo dell'account dopo la transazione
+*/
     function getBalanceChange(txResult, targetAcct) {
         let acctIdx = txResult.transaction.message.staticAccountKeys.findIndex(item => item.toString() === targetAcct);
         let preBalanceObj = txResult.meta.preTokenBalances.find(item => item.accountIndex === acctIdx);
@@ -474,7 +543,21 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
         let postBalance = postBalanceObj && postBalanceObj.uiTokenAmount && postBalanceObj.uiTokenAmount.uiAmount ? postBalanceObj.uiTokenAmount.uiAmount : 0;
         return {preBalance: preBalance, postBalance: postBalance}
     }
+/*
+	La funzione getTokenBalanceChanges(br, targetAcct) viene utilizzata per recuperare i cambiamenti di saldo di tutti i token a seguito di una transazione. 
+ 	La funzione accetta due parametri:
+		br: Il risultato della transazione che si desidera analizzare
+		targetAcct: L'account il cui saldo dei token si desidera analizzare
+	La funzione inizia creando un oggetto vuoto gr che verrà utilizzato per memorizzare i cambiamenti di saldo dei token.
 
+	Successivamente, la funzione itera attraverso gli oggetti preTokenBalances e postTokenBalances contenuti nell'attributo meta del risultato della transazione br.
+ 	Per ogni oggetto TokenBalance, la funzione recupera l'indirizzo dell'account (vr) e il saldo prima (Sr) e dopo (wr) la transazione.
+
+	Se l'indirizzo dell'account corrisponde all'indirizzo specificato in targetAcct, la funzione aggiorna il valore del saldo dell'account nell'oggetto gr 
+ 	aggiungendo il valore del saldo dopo la transazione al valore del saldo prima della transazione.
+
+	Infine, la funzione restituisce l'oggetto gr che contiene i cambiamenti di saldo di tutti i token a seguito della transazione.
+*/
     // Extracted from SAGE Labs, keep for future reference
     function getTokenBalanceChanges(br, targetAcct) {
         const gr = {};
@@ -492,31 +575,64 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
         }
         return gr
     }
+/*
+	La funzione calculateMovementDistance(orig, dest) viene utilizzata per calcolare la distanza tra due coordinate. 
+ 	La funzione accetta due parametri:
+		orig: Le coordinate di partenza
+		dest: Le coordinate di destinazione
+	La funzione inizia verificando se la destinazione (dest) è specificata. Se la destinazione non è specificata,
+	la funzione restituisce 0, indicando che la distanza è sconosciuta.
 
+	Se la destinazione è specificata, la funzione calcola la distanza utilizzando la formula della distanza euclidea,
+	che è la radice quadrata della somma dei quadrati delle differenze tra le coordinate di partenza e quelle di destinazione.
+
+	La funzione restituisce la distanza calcolata come valore float.
+*/
     function calculateMovementDistance(orig, dest) {
         return dest ? Math.sqrt((orig[0] - dest[0]) ** 2 + (orig[1] - dest[1]) ** 2) : 0
     }
+/*
+	La funzione calculateWarpTime(fleet, distance) viene utilizzata per calcolare il tempo di warp necessario per una flotta per percorrere una determinata distanza.
+ 	La funzione accetta due parametri:
+		fleet: La flotta da considerare
+		distance: La distanza da percorrere
+	La funzione inizia verificando se la velocità di warp della flotta (warpSpeed) è maggiore di 0. Se la velocità di warp è 0, la funzione restituisce 0, indicando che la flotta non può viaggiare a warp.
 
+	Se la velocità di warp è maggiore di 0, la funzione calcola il tempo di warp necessario percorrendo la distanza (distance) alla velocità di warp della flotta (warpSpeed).
+ 	La velocità di warp è misurata in unità di gigasol (GS), quindi la funzione converte il valore della distanza in megasol (MS) dividendo per 1e6.
+
+	La funzione restituisce il tempo di distorsione calcolato in secondi.
+*/
     function calculateWarpTime(fleet, distance) {
         return fleet.warpSpeed > 0 ? distance / (fleet.warpSpeed / 1e6) : 0
     }
-
+/*
+	
+*/
     function calculateWarpFuelBurn(fleet, distance) {
         return distance * (fleet.warpFuelConsumptionRate / 100)
     }
-
+/*
+	
+*/
     function calculateSubwarpTime(fleet, distance) {
         return fleet.subwarpSpeed > 0 ? distance / (fleet.subwarpSpeed / 1e6) : 0
     }
-
+/*
+	
+*/
     function calculateSubwarpFuelBurn(fleet, distance) {
         return distance * (fleet.subwarpFuelConsumptionRate / 100)
     }
-
+/*
+	
+*/
     function calculateMiningDuration(cargoCapacity, miningRate, resourceHardness, systemRichness) {
         return resourceHardness > 0 ? Math.ceil(cargoCapacity / (((miningRate / 10000) * (systemRichness / 100)) / (resourceHardness / 100))) : 0;
     }
-
+/*
+	
+*/
     async function getStarbaseFromCoords(x, y) {
         return new Promise(async resolve => {
             let xBN = new BrowserAnchor.anchor.BN(x);
@@ -542,7 +658,9 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
             resolve(starbase);
         });
     }
-
+/*
+	
+*/
     async function getPlanetsFromCoords(x, y) {
         return new Promise(async resolve => {
             let xBN = new BrowserAnchor.anchor.BN(x);
@@ -568,7 +686,9 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
             resolve(planets);
         });
     }
-
+/*
+	
+*/
     async function getStarbasePlayer(userProfile, starbase) {
         return new Promise(async resolve => {
             let [starbasePlayer] = await sageProgram.account.starbasePlayer.all([
@@ -588,7 +708,9 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
             resolve(starbasePlayer);
         });
     }
-
+/*
+	
+*/
     async function getFleetCntAtCoords() {
         let gridSizeElem = document.querySelector('#fleetGridSelect');
         let gridSize = gridSizeElem.value;
@@ -693,7 +815,9 @@ Il codice recupera informazioni sugli account e sulle definizioni di statistiche
             loadingMessage.style.display = 'none';
             fleetGrid.style.display = 'block';
             //resultDiv.appendChild(fleetGrid);
-
+/*
+	
+*/
         } catch (error) {
             console.error('Error fetching fleet information:', error);
             loadingMessage.innerText = 'Error fetching fleet information';
